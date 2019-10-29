@@ -1,11 +1,12 @@
 Particle[] dust = new Particle[150];
+boolean flashlight = false;
 void setup()
 {
 	background(0);
 	size(500,500);
-	dust[0] = new OddballParticle(250,250);
-	dust[1] = new OddballParticle(250,250);
-	for(int i = 2; i<dust.length;i++)
+	dust[149] = new OddballParticle(250,250);
+	dust[148] = new OddballParticle(250,250);
+	for(int i = 0; i<dust.length-2;i++)
 		dust[i] = new Particle(250,250,Math.random()*2*Math.PI,Math.random()*5);
 }
 void draw()
@@ -14,25 +15,31 @@ void draw()
 	for(Particle p : dust){
 		p.show();
 		p.move();
+		p.updateOpacity();
 		p.checkForOffScreen();
 	}
 }
 void mousePressed(){
 	for(Particle p : dust){
 		p.reset();
-		p.speed = Math.random()*5;
+		p.speed = Math.random()*3+2;
 	}
+}
+void keyPressed(){
+	if(key=='F'||key=='f')
+		flashlight = !flashlight;
 }
 class Particle
 {
-	double x,y,angle,speed;
-	int col;
+	double x,y,angle,speed,opacity;
+	int col,r;
 	Particle(double x, double y, double angle, double speed){
 		this.x=x;
 		this.y=y;
 		this.angle=angle;
 		this.speed=speed;
-		col = color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
+		opacity = 255;
+		col = color(255,255,255);
 	}
 	Particle(){
 	}
@@ -41,18 +48,23 @@ class Particle
 		y+=Math.sin(angle)*speed;
 	}
 	void show(){
-		fill(col);
-		stroke(col);
+		fill(col,(float)opacity);
+		stroke(col,(float)opacity);
 		ellipse((float)x,(float)y,10.0,10.0);
 	}
 	void reset(){
 		x=y=250;
-		col = color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
 		angle = Math.random()*2*PI;
 		speed = Math.random()*3+2;
 	}
 	void checkForOffScreen(){
 		if(x>500||x<0||y>500||y<0) reset();
+	}
+	void updateOpacity(){
+		if(!flashlight)
+			opacity = dist((float)x,(float)y,250.0,250.0);
+		if(flashlight)
+			opacity = 255-dist((float)x,(float)y,250.0,250.0);
 	}
 }
 
@@ -62,15 +74,20 @@ class OddballParticle extends Particle
 		super();
 		this.x = x;
 		this.y = y;
+		opacity = 127;
+		col = color(255,255,0);
 	}
 	void move(){
 		x+=Math.random()*6-3;
 		y+=Math.random()*6-3;
 	}
 	void show(){
-		fill(255,0,0);
-		stroke(255,0,0);
+		fill(col,(float)opacity);
+		stroke(col,(float)opacity);
 		rect((float)x,(float)y,20.0,20.0);
+	}
+	void updateOpacity(){
+
 	}
 }
 
