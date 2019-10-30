@@ -1,5 +1,6 @@
 Particle[] dust = new Particle[150];
 boolean flashlight = false;
+boolean fast = false;
 void setup()
 {
 	background(0);
@@ -22,12 +23,22 @@ void draw()
 void mousePressed(){
 	for(Particle p : dust){
 		p.reset();
-		p.speed = Math.random()*3+2;
 	}
 }
 void keyPressed(){
 	if(key=='F'||key=='f')
 		flashlight = !flashlight;
+	if(key=='s'||key=='S'){
+		if(fast){
+			for(Particle p : dust)
+				p.speed*=10;
+		}
+		if(!fast){
+			for(Particle p : dust)
+				p.speed/=10;
+		}
+		fast = !fast;
+	}
 }
 class Particle
 {
@@ -74,12 +85,13 @@ class OddballParticle extends Particle
 		super();
 		this.x = x;
 		this.y = y;
+		speed=6;
 		opacity = 127;
 		col = color(255,255,0);
 	}
 	void move(){
-		x+=Math.random()*6-3;
-		y+=Math.random()*6-3;
+		x+=Math.random()*speed-speed/2;
+		y+=Math.random()*speed-speed/2;
 	}
 	void show(){
 		fill(col,(float)opacity);
