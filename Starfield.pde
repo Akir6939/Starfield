@@ -27,7 +27,8 @@ void draw()
 }
 void mousePressed(){
 	strobe = false;
-	flashlight=false;
+	flashlight = false;
+	fast = false;
 	for(Particle p : dust){
 		p.reset();
 		p.r=p.g=p.b=255;
@@ -47,7 +48,7 @@ void keyPressed(){
 		}
 		fast = !fast;
 	}
-	if(key=='t'||key=='T'){
+	if(key=='r'||key=='R'){
 		if(strobe){
 			for(Particle p : dust)
 				p.r=p.g=p.b=255;
@@ -127,6 +128,12 @@ class OddballParticle extends Particle
 		rect((float)x,(float)y,20.0,20.0);
 	}
 	void updateOpacity(){
-
+		if(strobe){
+			if(opacity>=255)
+				opacity=0;
+			opacity+=10;
+		}
+		if(!strobe)
+			opacity = 127;
 	}
 }
