@@ -1,37 +1,27 @@
 Particle[] dust = new Particle[150];
-boolean flashlight = false;
-boolean fast = false;
-boolean strobe = false;
+boolean flashlight,fast,strobe;
 void setup()
 {
-	background(0);
+	flashlight=fast=strobe=false;
 	size(500,500);
-	dust[149] = new OddballParticle(250,250);
-	dust[148] = new OddballParticle(250,250);
-	dust[147] = new OddballParticle(250,250);
-	dust[146] = new OddballParticle(250,250);
-	dust[145] = new OddballParticle(250,250);
-	for(int i = 0; i<dust.length-5;i++)
-		dust[i] = new Particle(250,250,Math.random()*2*Math.PI,Math.random()*5);
+	for(int i = 146;i<dust.length;i++)
+		dust[i] = new OddballParticle(250,250);
+	for(int i = 0; i<dust.length-4;i++)
+		dust[i] = new Particle(250,250,Math.random()*TWO_PI,Math.random()*5);
 }
 void draw()
 {
-	background(0);
-	for(Particle p : dust){
-		p.show();
-		p.move();
-		p.updateOpacity();
-		p.colorStrobe();
-		p.checkForOffScreen();
-	}
+	if(strobe||flashlight)
+		background(0);
+	else
+		background(100);
+	for(Particle p : dust)
+		p.doDraw();
 }
 void mousePressed(){
-	strobe = false;
-	flashlight = false;
-	fast = false;
+	strobe = flashlight = fast = false;
 	for(Particle p : dust){
 		p.reset();
-		p.r=p.g=p.b=255;
 	}
 }
 void keyPressed(){
@@ -59,16 +49,24 @@ void keyPressed(){
 class Particle
 {
 	double x,y,angle,speed,opacity;
-	int col,r,g,b;
+	int r,g,b;
 	Particle(double x, double y, double angle, double speed){
 		this.x=x;
 		this.y=y;
 		this.angle=angle;
 		this.speed=speed;
-		opacity = 255;
+		opacity = 255.0;
 		r = g = b = 255;
 	}
 	Particle(){
+	}
+	void doDraw(){
+		show();
+		move();
+		updateOpacity();
+		colorStrobe();
+		checkForOffScreen();
+
 	}
 	void move(){
 		x+=Math.cos(angle)*speed;
@@ -80,8 +78,9 @@ class Particle
 		ellipse((float)x,(float)y,10.0,10.0);
 	}
 	void reset(){
+		r=g=b=255;
 		x=y=250;
-		angle = Math.random()*2*PI;
+		angle = Math.random()*TWO_PI;
 		speed = Math.random()*3+2;
 	}
 	void checkForOffScreen(){
@@ -119,13 +118,13 @@ class OddballParticle extends Particle
 		r = g = b = 255;
 	}
 	void move(){
-		x+=Math.random()*speed-speed/2;
-		y+=Math.random()*speed-speed/2;
+		x+=1.2*(Math.random()*speed-speed/2);
+		y+=1.2*(Math.random()*speed-speed/2);
 	}
 	void show(){
 		fill(r,g,b,(float)opacity);
 		stroke(r,g,b,(float)opacity);
-		rect((float)x,(float)y,20.0,20.0);
+		rect((float)x,(float)y,20.0,20.0,5.0);
 	}
 	void updateOpacity(){
 		if(strobe){
